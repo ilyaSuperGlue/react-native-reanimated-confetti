@@ -4,7 +4,7 @@ import {
   type StyleProp,
   type ViewStyle,
 } from 'react-native';
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 import Animated, {
   Easing,
   useAnimatedStyle,
@@ -14,9 +14,8 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 
-const { height } = Dimensions.get('window');
-
-const maximuxXOffset = 30;
+const { height, width } = Dimensions.get('window');
+const MAX_X_OFFSET = 30;
 
 interface ConfettiProps {
   color?: string;
@@ -25,6 +24,25 @@ interface ConfettiProps {
   duration?: number;
   particleStyle?: StyleProp<ViewStyle>;
 }
+
+const generateRandomPositions = (
+  startPos: number,
+  maxOffset: number,
+  widthProp: number,
+  count: number = 6
+): number[] => {
+  const positions = [];
+  for (let i = 0; i < count; i++) {
+    const randomOffset =
+      Math.random() * maxOffset * (Math.random() < 0.5 ? -1 : 1);
+    let newPosition = startPos + randomOffset;
+    if (newPosition < 0) newPosition = 0;
+    if (newPosition > widthProp) newPosition = widthProp;
+    positions.push(newPosition);
+  }
+  return positions;
+};
+
 const Confetti = ({
   color,
   startXPosition,
@@ -34,44 +52,67 @@ const Confetti = ({
 }: ConfettiProps) => {
   const translateY = useSharedValue(-100);
   const translateX = useSharedValue(startXPosition);
-  const animatedStyle = useAnimatedStyle(() => ({
-    transform: [
-      { translateY: translateY.value },
-      { translateX: translateX.value },
-      {
-        // give a wavy effect on X axis
-        skewX: `${Math.sin(translateY.value / 10) * 15}deg`,
-      },
-      {
-        // give a rotation effect
-        rotateZ: `${translateY.value + translateX.value}deg`,
-      },
-      {
-        // give a wavy effect on Y axis
-        skewY: `${Math.cos(translateY.value / 10) * 15}deg`,
-      },
-      {
-        // hide particles when not playing
-        scale: isPlaying ? 1 : 0,
-      },
-    ],
-  }));
+  const animationRef = useRef(false);
 
-  const randomize = useCallback((width: number): number[] => {
-    const positions = [];
-    for (let i = 0; i < 6; i++) {
-      const randomOffset =
-        Math.random() * maximuxXOffset * (Math.random() < 0.5 ? -1 : 1);
-      let newPosition = width + randomOffset;
-      if (newPosition < 0) newPosition = 0;
-      if (newPosition > Dimensions.get('window').width)
-        newPosition = Dimensions.get('window').width;
-      positions.push(newPosition);
-    }
-    return positions;
-  }, []);
+  const skewYThreshold = useRef(Math.random() * 100 + 50).current;
+  const skewXThreshold = useRef(Math.random() * 100 + 50).current;
+  const rotateZThreshold = useRef(Math.random() * 100 + 50).current;
+
+  const prevSkewX = useSharedValue(0);
+  const prevSkewY = useSharedValue(0);
+  const prevRotateZ = useSharedValue(0);
+
+  const randomPositions = useMemo(
+    () => generateRandomPositions(startXPosition, MAX_X_OFFSET, width),
+    [startXPosition]
+  );
+
+  const particleDimensions = useMemo(
+    () => ({
+      width: Math.random() * 10 + 10,
+      aspectRatio: Math.random() * 1 + 1,
+    }),
+    []
+  );
+
+  const animatedStyle = useAnimatedStyle(() => {
+    const y = translateY.value;
+    const x = translateX.value;
+
+    const normalizedSkewY = Math.floor(y / skewYThreshold) * skewYThreshold;
+    const normalizedSkewX = Math.floor(x / skewXThreshold) * skewXThreshold;
+    const normalizedRotateZ =
+      Math.floor((y + x) / rotateZThreshold) * rotateZThreshold;
+
+    const yNorm = normalizedSkewY / 10;
+    const xNorm = normalizedSkewX / 10;
+
+    const newSkewX = Math.sin(yNorm) * 15;
+    const newSkewY = Math.cos(xNorm) * 15;
+    const newRotateZ = normalizedRotateZ;
+
+    if (newSkewX !== prevSkewX.value) prevSkewX.value = newSkewX;
+    if (newSkewY !== prevSkewY.value) prevSkewY.value = newSkewY;
+    if (newRotateZ !== prevRotateZ.value) prevRotateZ.value = newRotateZ;
+
+    return {
+      transform: [
+        { translateY: y },
+        { translateX: x },
+        { skewX: `${prevSkewX.value}deg` },
+        { rotateZ: `${prevRotateZ.value}deg` },
+        { skewY: `${prevSkewY.value}deg` },
+        {
+          scale: isPlaying ? 1 : withTiming(0, { duration: 500 }),
+        },
+      ],
+    };
+  });
 
   const fallingAnimation = useCallback(() => {
+    if (animationRef.current) return;
+    animationRef.current = true;
+
     // Falling down
     translateY.value = withDelay(
       Math.random() * duration,
@@ -81,28 +122,42 @@ const Confetti = ({
       })
     );
 
-    //random left right movement
-    const randomX = randomize(startXPosition);
+    // Random left right movement
     translateX.value = withDelay(
       Math.random() * duration,
       withSequence(
-        ...randomX.map((pos) =>
+        ...randomPositions.map((pos) =>
           withTiming(pos, {
-            duration: duration / randomX.length,
+            duration: duration / randomPositions.length,
           })
         )
       )
     );
-  }, [duration, randomize, startXPosition, translateX, translateY]);
+  }, [duration, randomPositions, translateX, translateY]);
+
+  const resetAnimation = useCallback(() => {
+    animationRef.current = false;
+    translateY.value = -100;
+    translateX.value = startXPosition;
+    prevSkewX.value = 0;
+    prevSkewY.value = 0;
+    prevRotateZ.value = 0;
+  }, [
+    startXPosition,
+    translateX,
+    translateY,
+    prevSkewX,
+    prevSkewY,
+    prevRotateZ,
+  ]);
 
   useEffect(() => {
     if (isPlaying) {
       fallingAnimation();
     } else {
-      translateY.value = 0;
-      translateX.value = 0;
+      resetAnimation();
     }
-  }, [isPlaying, fallingAnimation, translateX, translateY]);
+  }, [isPlaying, fallingAnimation, resetAnimation]);
 
   return (
     <Animated.View
@@ -110,6 +165,7 @@ const Confetti = ({
         {
           backgroundColor: color,
           left: startXPosition,
+          ...particleDimensions,
         },
         particleStyle,
         styles.confettiFlake,
@@ -123,8 +179,6 @@ export default Confetti;
 
 const styles = StyleSheet.create({
   confettiFlake: {
-    width: Math.random() * 10 + 10,
-    aspectRatio: Math.random() * 1 + 1,
     position: 'absolute',
     top: 0,
     zIndex: 1000,

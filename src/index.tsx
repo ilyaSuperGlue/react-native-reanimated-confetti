@@ -1,1 +1,1 @@
-export { default as useConfetti } from "./hooks/useConfetti";
+export { default as useConfetti } from './hooks/useConfetti';

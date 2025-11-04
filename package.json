@@ -87,7 +87,7 @@
   "peerDependencies": {
     "react": "*",
     "react-native": "*",
-    "react-native-reanimated": ">=3.0.0"
+    "react-native-reanimated": ">=4.0.0"
   },
   "workspaces": [
     "example"
@@ -153,5 +153,11 @@
     "languages": "js",
     "type": "library",
     "version": "0.54.8"
+  },
+  "reanimated": {
+    "staticFeatureFlags": {
+      "ANDROID_SYNCHRONOUSLY_UPDATE_UI_PROPS": true,
+      "IOS_SYNCHRONOUSLY_UPDATE_UI_PROPS": true
+    }
   }
 }
