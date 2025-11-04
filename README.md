@@ -37,9 +37,7 @@ const styles = StyleSheet.create({
 });
 ```
 
-<video width={600} controls>
-  <source src="./example/assets/sample.mov" type="video/mov">
-</video>
+https://github.com/user-attachments/assets/e0a17369-a872-41cd-9f38-ce20cc14df58
 
 ## API
 
