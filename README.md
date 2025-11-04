@@ -37,7 +37,7 @@ const styles = StyleSheet.create({
 });
 ```
 
-https://github.com/user-attachments/assets/e0a17369-a872-41cd-9f38-ce20cc14df58
+<video src="https://github.com/user-attachments/assets/e0a17369-a872-41cd-9f38-ce20cc14df58" width="352" height="720" controls></video>
 
 ## API
 
