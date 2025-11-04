@@ -1,5 +1,5 @@
 {
-  "name": "@hikaam/react-native-reanimated-confetti",
+  "name": "@hikaaam/react-native-reanimated-confetti",
   "version": "0.1.0",
   "description": "simple confetti animation using reanimated",
   "main": "./lib/module/index.js",
