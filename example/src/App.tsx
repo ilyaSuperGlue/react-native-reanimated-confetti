@@ -1,6 +1,6 @@
-import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { useConfetti } from "react-native-reanimated-confetti";
+import { StatusBar } from 'expo-status-bar';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { useConfetti } from '@hikaaam/react-native-reanimated-confetti';
 
 export default function App() {
   const { RenderConfetti, startconfetti } = useConfetti();
@@ -18,9 +18,9 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  text: { color: "#000", fontSize: 16 },
+  text: { color: '#000', fontSize: 16 },
 });
