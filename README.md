@@ -40,6 +40,7 @@ const styles = StyleSheet.create({
 <video src="https://github.com/user-attachments/assets/e0a17369-a872-41cd-9f38-ce20cc14df58" width="352" height="720" controls></video>
 
 ## DEMO
+
 [expo snack demo](https://snack.expo.dev/@ilyasyusuf01/blissful-violet-apple)
 
 ## API
@@ -48,7 +49,7 @@ const styles = StyleSheet.create({
 
 | Option            | Type     | Default    | Description                  |
 | ----------------- | -------- | ---------- | ---------------------------- |
-| `particlesAmount` | number   | 200        | Number of confetti particles |
+| `particlesAmount` | number   | 80         | Number of confetti particles |
 | `colors`          | string[] | See source | Array of confetti colors     |
 | `duration`        | number   | 2000       | Animation duration (ms)      |
 

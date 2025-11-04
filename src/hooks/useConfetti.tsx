@@ -1,4 +1,4 @@
-import { Dimensions } from 'react-native';
+import { Dimensions, Platform } from 'react-native';
 import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 import Confetti from '../Components/Confetti';
 import { type ConfettiProps } from './interface';
@@ -14,7 +14,7 @@ const getRandomColor = (colors: string[]) => {
 const useConfetti = (props?: ConfettiProps) => {
   const {
     duration = 2000,
-    particlesAmount = 200,
+    particlesAmount = Platform.OS === 'android' ? 80 : 150,
     colors = default_colors,
   } = props || {};
 

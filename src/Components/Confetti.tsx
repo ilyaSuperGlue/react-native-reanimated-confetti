@@ -58,7 +58,6 @@ const Confetti = ({
   }));
 
   const randomize = useCallback((width: number): number[] => {
-    'worklet';
     const positions = [];
     for (let i = 0; i < 6; i++) {
       const randomOffset =
