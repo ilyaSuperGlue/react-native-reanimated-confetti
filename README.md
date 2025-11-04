@@ -39,6 +39,9 @@ const styles = StyleSheet.create({
 
 <video src="https://github.com/user-attachments/assets/e0a17369-a872-41cd-9f38-ce20cc14df58" width="352" height="720" controls></video>
 
+## DEMO
+[expo snack demo](https://snack.expo.dev/@ilyasyusuf01/blissful-violet-apple)
+
 ## API
 
 ### `useConfetti(options?)`
