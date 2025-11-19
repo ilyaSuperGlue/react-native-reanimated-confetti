@@ -1,6 +1,6 @@
 {
   "name": "@hikaaam/react-native-reanimated-confetti",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "description": "simple confetti animation using reanimated",
   "main": "./lib/module/index.js",
   "types": "./lib/typescript/src/index.d.ts",
