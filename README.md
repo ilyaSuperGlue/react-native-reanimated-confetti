@@ -41,7 +41,7 @@ const styles = StyleSheet.create({
 
 ## DEMO
 
-[expo snack demo](https://snack.expo.dev/@ilyasyusuf01/blissful-violet-apple)
+[expo snack demo](https://snack.expo.dev/@ilyasyusuf01/react-native-reanimate-confetti)
 
 ## API
 
